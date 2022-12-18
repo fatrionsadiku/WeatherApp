@@ -18,7 +18,7 @@ class HomeViewModel : ViewModel() {
     val windData = MutableLiveData<Wind>()
     val descriptionData: MutableLiveData<List<WeatherX>> = MutableLiveData<List<WeatherX>>()
 
-    private val apiKey = "63469917233f9cacb4fc47652cea06d8"
+    private val apiKey = "42d8e86fdaeba1be7605f429eb29df7d"
 
     fun getWeatherDetails(cityName: String) {
         repository.apiService.getWeatherData(cityName, apiKey)
