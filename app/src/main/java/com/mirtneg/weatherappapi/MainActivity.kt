@@ -1,5 +1,6 @@
 package com.mirtneg.weatherappapi
 
+import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,3 +14,4 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
     }
 }
+

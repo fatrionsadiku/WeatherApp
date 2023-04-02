@@ -6,12 +6,15 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.mirtneg.weatherappapi.R
 import com.mirtneg.weatherappapi.data.models.Weather
 import com.mirtneg.weatherappapi.databinding.FragmentHomeBinding
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -30,23 +33,43 @@ class HomeFragment : Fragment() {
         viewModel = ViewModelProvider(requireActivity())[HomeViewModel::class.java]
         return binding.root
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         fetchWeatherDataAndPopulateUI("Pristina")
+
+        binding.cityNameTv.setOnLongClickListener {cityname ->
+            cityname as TextView
+            when(cityname.text) {
+                "Pristina" -> {
+                    fetchWeatherDataAndPopulateUI("Japan")
+                }
+                "Japan" -> {
+                    fetchWeatherDataAndPopulateUI("Pristina")
+                }
+            }
+            true
+        }
     }
 
-    private fun fetchWeatherDataAndPopulateUI(countryName : String) = viewLifecycleOwner.lifecycleScope.launch {
-        val currentWeather = viewModel.getWeatherDetails(countryName)
-        populateUIWithData(currentWeather!!)
-        val currentTime = Calendar.getInstance().time
-        determineWetherDayOrNight(currentTime)
+    private fun fetchWeatherDataAndPopulateUI(countryName: String) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            randomBsGo(false)
+            delay(100)
+            val currentWeather = viewModel.getWeatherDetails(countryName)
+            populateUIWithData(currentWeather!!)
+            val currentTime = Calendar.getInstance().time
+            determineWetherDayOrNight(currentTime,if (countryName == "Pristina") Locale.getDefault() else Locale(countryName,countryName))
+            randomBsGo(true)
+        }
     }
-    private fun determineWetherDayOrNight(date : Date?) {
-        val formatter = SimpleDateFormat("HH:mm", Locale.getDefault())
+
+    private fun determineWetherDayOrNight(date: Date?, countryCode : Locale) {
+        val formatter = SimpleDateFormat("HH:mm", countryCode)
         val timeFormatted = formatter.format(date)
-        val timeToInt = timeFormatted.removeRange(2,timeFormatted.length).toInt()
-        if(timeToInt < 6 || timeToInt > 18){
+        val timeToInt = timeFormatted.removeRange(2, timeFormatted.length).toInt()
+        if (timeToInt < 6 || timeToInt > 18) {
             binding.weatherImageIv.setImageResource(R.drawable.moon)
             binding.homeFragment.setBackgroundResource(R.drawable.ic_rec2)
         } else {
@@ -71,6 +94,45 @@ class HomeFragment : Fragment() {
             }
         }
     }
+
+    private fun randomBsGo(isCompleted: Boolean) {
+        when (isCompleted) {
+            false -> {
+                binding.apply {
+                    progressBar.isVisible = true
+                    cityNameTv.isVisible = false
+                    weatherImageIv.isVisible = false
+                    weatherDescriptionTv.isVisible = false
+                    weatherDetailTv.isVisible = false
+                    tempTv.isVisible = false
+                    celsiusTv.isVisible = false
+                    weatherLogoTv.isVisible = false
+                    maxTempTv.isVisible = false
+                    minTempTv.isVisible = false
+                    linearLayoutMaxMinTemp.isVisible = false
+                    linearLayoutWindHumidityPrecipitation.isVisible = false
+                }
+            }
+
+            true -> {
+                binding.apply {
+                    progressBar.isVisible = false
+                    cityNameTv.isVisible = true
+                    weatherImageIv.isVisible = true
+                    weatherDescriptionTv.isVisible = true
+                    weatherDetailTv.isVisible = true
+                    tempTv.isVisible = true
+                    weatherLogoTv.isVisible = true
+                    celsiusTv.isVisible = true
+                    maxTempTv.isVisible = true
+                    minTempTv.isVisible = true
+                    linearLayoutMaxMinTemp.isVisible = true
+                    linearLayoutWindHumidityPrecipitation.isVisible = true
+                }
+            }
+        }
+    }
+
     private fun kelvinToCelsius(value: Double): String = ((value - 273.15f).toInt()).toString()
 }
 
