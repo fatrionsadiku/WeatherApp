@@ -9,14 +9,39 @@
 
         <ProgressBar
             android:id="@+id/progressBar"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="18dp"
             android:backgroundTint="@color/black"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/retryConnectionButton"
+            android:layout_width="130dp"
+            android:layout_height="130dp"
+            android:layout_marginBottom="18dp"
+            android:src="@drawable/retry_icon"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/connectionFailed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Connection failed, check your internet connection!"
+            android:textColor="#FF0000"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/retryConnectionButton" />
 
         <ImageView
             android:id="@+id/weather_logo_tv"
@@ -197,7 +222,6 @@
                 android:textColor="#FFFFFF"
                 android:textFontWeight="600" />
         </LinearLayout>
-
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

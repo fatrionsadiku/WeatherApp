@@ -19,10 +19,6 @@ import java.lang.Exception
 
 class HomeViewModel : ViewModel() {
     private val repository = Repository()
-    val mainData: MutableLiveData<Main> = MutableLiveData<Main>()
-    val nameData: MutableLiveData<String> = MutableLiveData<String>()
-    val windData = MutableLiveData<Wind>()
-    val descriptionData: MutableLiveData<List<WeatherX>> = MutableLiveData<List<WeatherX>>()
 
     private val apiKey = "42d8e86fdaeba1be7605f429eb29df7d"
 

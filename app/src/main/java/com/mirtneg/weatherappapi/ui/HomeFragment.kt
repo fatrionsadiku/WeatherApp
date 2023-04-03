@@ -55,13 +55,31 @@ class HomeFragment : Fragment() {
 
     private fun fetchWeatherDataAndPopulateUI(countryName: String) {
         viewLifecycleOwner.lifecycleScope.launch {
-            randomBsGo(false)
-            delay(100)
-            val currentWeather = viewModel.getWeatherDetails(countryName)
-            populateUIWithData(currentWeather!!)
-            val currentTime = Calendar.getInstance().time
-            determineWetherDayOrNight(currentTime,if (countryName == "Pristina") Locale.getDefault() else Locale(countryName,countryName))
-            randomBsGo(true)
+            try {
+                randomBsGo(false)
+                delay(100)
+                val currentWeather = viewModel.getWeatherDetails(countryName)
+                populateUIWithData(currentWeather!!)
+                val currentTime = Calendar.getInstance().time
+                determineWetherDayOrNight(currentTime,if (countryName == "Pristina") Locale.getDefault() else Locale(countryName,countryName))
+                randomBsGo(true)
+            } catch (e : Exception){
+                Log.e("Error while fetching weather data", "fetchWeatherDataAndPopulateUI: $e", e )
+                binding.connectionFailed.apply {
+                    alpha = 0f
+                    isVisible = true
+                    animate().alpha(1f).duration = 500
+                }
+                binding.progressBar.isVisible = false
+                binding.retryConnectionButton.apply {
+                    alpha = 0f
+                    isVisible = true
+                    animate().alpha(1f).duration = 500
+                    setOnClickListener {
+                        fetchWeatherDataAndPopulateUI(countryName)
+                    }
+                }
+            }
         }
     }
 
@@ -113,7 +131,6 @@ class HomeFragment : Fragment() {
                     linearLayoutWindHumidityPrecipitation.isVisible = false
                 }
             }
-
             true -> {
                 binding.apply {
                     progressBar.isVisible = false
@@ -128,6 +145,8 @@ class HomeFragment : Fragment() {
                     minTempTv.isVisible = true
                     linearLayoutMaxMinTemp.isVisible = true
                     linearLayoutWindHumidityPrecipitation.isVisible = true
+                    connectionFailed.isVisible = false
+                    retryConnectionButton.isVisible = false
                 }
             }
         }
