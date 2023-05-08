@@ -22,8 +22,8 @@ import java.util.Date
 import java.util.Locale
 
 class HomeFragment : Fragment() {
-    lateinit var binding: FragmentHomeBinding
-    lateinit var viewModel: HomeViewModel
+    private lateinit var binding: FragmentHomeBinding
+    private lateinit var viewModel: HomeViewModel
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -36,6 +36,14 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.homeFragment.apply {
+            setOnRefreshListener {
+                fetchWeatherDataAndPopulateUI("Pristina")
+                isRefreshing = false
+            }
+
+        }
 
         fetchWeatherDataAndPopulateUI("Pristina")
 
