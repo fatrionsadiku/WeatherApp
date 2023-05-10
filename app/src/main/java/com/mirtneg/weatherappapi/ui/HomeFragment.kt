@@ -1,6 +1,5 @@
 package com.mirtneg.weatherappapi.ui
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -47,12 +46,13 @@ class HomeFragment : Fragment() {
 
         fetchWeatherDataAndPopulateUI("Pristina")
 
-        binding.cityNameTv.setOnLongClickListener {cityname ->
+        binding.cityNameTv.setOnLongClickListener { cityname ->
             cityname as TextView
-            when(cityname.text) {
+            when (cityname.text) {
                 "Pristina" -> {
                     fetchWeatherDataAndPopulateUI("Japan")
                 }
+
                 "Japan" -> {
                     fetchWeatherDataAndPopulateUI("Pristina")
                 }
@@ -64,15 +64,21 @@ class HomeFragment : Fragment() {
     private fun fetchWeatherDataAndPopulateUI(countryName: String) {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                randomBsGo(false)
+                showProgressBarAndHideViews(false)
                 delay(100)
                 val currentWeather = viewModel.getWeatherDetails(countryName)
                 populateUIWithData(currentWeather!!)
                 val currentTime = Calendar.getInstance().time
-                determineWetherDayOrNight(currentTime,if (countryName == "Pristina") Locale.getDefault() else Locale(countryName,countryName))
-                randomBsGo(true)
-            } catch (e : Exception){
-                Log.e("Error while fetching weather data", "fetchWeatherDataAndPopulateUI: $e", e )
+                determineWetherDayOrNight(
+                    currentTime,
+                    if (countryName == "Pristina") Locale.getDefault() else Locale(
+                        countryName,
+                        countryName
+                    )
+                )
+                showProgressBarAndHideViews(true)
+            } catch (e: Exception) {
+                Log.e("Error while fetching weather data", "fetchWeatherDataAndPopulateUI: $e", e)
                 binding.connectionFailed.apply {
                     alpha = 0f
                     isVisible = true
@@ -91,7 +97,7 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun determineWetherDayOrNight(date: Date?, countryCode : Locale) {
+    private fun determineWetherDayOrNight(date: Date?, countryCode: Locale) {
         val formatter = SimpleDateFormat("HH:mm", countryCode)
         val timeFormatted = formatter.format(date)
         val timeToInt = timeFormatted.removeRange(2, timeFormatted.length).toInt()
@@ -121,46 +127,23 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun randomBsGo(isCompleted: Boolean) {
-        when (isCompleted) {
-            false -> {
-                binding.apply {
-                    progressBar.isVisible = true
-                    cityNameTv.isVisible = false
-                    weatherImageIv.isVisible = false
-                    weatherDescriptionTv.isVisible = false
-                    weatherDetailTv.isVisible = false
-                    tempTv.isVisible = false
-                    celsiusTv.isVisible = false
-                    weatherLogoTv.isVisible = false
-                    maxTempTv.isVisible = false
-                    minTempTv.isVisible = false
-                    linearLayoutMaxMinTemp.isVisible = false
-                    linearLayoutWindHumidityPrecipitation.isVisible = false
-                }
-            }
-            true -> {
-                binding.apply {
-                    progressBar.isVisible = false
-                    cityNameTv.isVisible = true
-                    weatherImageIv.isVisible = true
-                    weatherDescriptionTv.isVisible = true
-                    weatherDetailTv.isVisible = true
-                    tempTv.isVisible = true
-                    weatherLogoTv.isVisible = true
-                    celsiusTv.isVisible = true
-                    maxTempTv.isVisible = true
-                    minTempTv.isVisible = true
-                    linearLayoutMaxMinTemp.isVisible = true
-                    linearLayoutWindHumidityPrecipitation.isVisible = true
-                    connectionFailed.isVisible = false
-                    retryConnectionButton.isVisible = false
-                }
-            }
+    private fun showProgressBarAndHideViews(isCompleted: Boolean) {
+        binding.apply {
+            progressBar.isVisible = !isCompleted
+            cityNameTv.isVisible = isCompleted
+            weatherImageIv.isVisible = isCompleted
+            weatherDescriptionTv.isVisible = isCompleted
+            weatherDetailTv.isVisible = isCompleted
+            tempTv.isVisible = isCompleted
+            celsiusTv.isVisible = isCompleted
+            weatherLogoTv.isVisible = isCompleted
+            maxTempTv.isVisible = isCompleted
+            minTempTv.isVisible = isCompleted
+            linearLayoutMaxMinTemp.isVisible = isCompleted
+            linearLayoutWindHumidityPrecipitation.isVisible = isCompleted
         }
     }
-
-    private fun kelvinToCelsius(value: Double): String = ((value - 273.15f).toInt()).toString()
 }
 
+private fun kelvinToCelsius(value: Double): String = ((value - 273.15f).toInt()).toString()
 
